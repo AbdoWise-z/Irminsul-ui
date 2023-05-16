@@ -444,15 +444,15 @@ class _SearchResults2PageState extends State<SearchResults2Page> {
                           ),
                         ),
                       ),
-                      const Padding(
-                        padding: EdgeInsets.only(left: 12),
-                        child: Text(
-                          "3. WRITE A FKN GOOD QUERY BRUH",
-                          style: TextStyle(
-                            fontSize: 16,
-                          ),
-                        ),
-                      ),
+                      // const Padding(
+                      //   padding: EdgeInsets.only(left: 12),
+                      //   child: Text(
+                      //     "3. WRITE A FKN GOOD QUERY BRUH",
+                      //     style: TextStyle(
+                      //       fontSize: 16,
+                      //     ),
+                      //   ),
+                      // ),
                     ],
                   ),
                 ),
