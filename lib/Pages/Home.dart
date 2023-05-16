@@ -21,9 +21,6 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
 
   bool switchPressed = false;
 
-
-
-
   late AnimationController animationController;
   late Animation<Color?> backgroundColorTween;
   late Animation<Color?> searchBarBodyColorTween;
@@ -146,9 +143,29 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                 Center(
                   child: Column(
                       children: [
+                        const SizedBox(
+                          width: 0,
+                          height: 120,
+                        ),
                         Padding(
-                          padding: const EdgeInsets.fromLTRB(0, 10, 0, 40),
-                          child: Image.asset("nahida.jpg"),
+                          padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
+                          child: Container(
+                            width: 150,
+                            height: 150,
+                            child: Image.asset(
+                                "irminsul_white.png",
+                              color: Colors.black,
+                            ),
+                          ),
+                        ),
+
+                        Container(
+                          width: 100,
+                          height: 75,
+                          child: Image.asset(
+                              "irminsul_text.png",
+                            color: Colors.black,
+                          ),
                         ),
                         SearchBar(
                           onSuggestionSelected: (String selection) {

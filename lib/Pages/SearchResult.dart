@@ -52,11 +52,11 @@ class _SearchResultState extends State<SearchResult> with TickerProviderStateMix
 
     _handleReadyChanged(false);
     tapped = false;
-    Uri url = Uri.http(serverAddress , "/search" , {"q" : controller.text});
+    Uri url = Uri.http(serverAddress , "/search" , {"q" : "google"});
     print("Requesting: $url");
     var response = await http.get(url);
     print(response.body);
-     resultList = jsonDecode(response.body);
+    resultList = jsonDecode(response.body);
     // await Future.delayed(const Duration(seconds: 2));
    _handleReadyChanged(true);
   }
@@ -118,6 +118,7 @@ class _SearchResultState extends State<SearchResult> with TickerProviderStateMix
 
     super.initState();
 
+    sendQuery();
     getSubResult();
 
     animationController = AnimationController(

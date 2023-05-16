@@ -23,7 +23,7 @@ class _SearchTextFieldState extends State<SearchTextField> {
       data: ThemeData(splashColor: (dark)? Colors.white: Colors.lightGreen,),
       child: Material(
         elevation: 10,
-        shape: RoundedRectangleBorder(borderRadius: (tapped)? const BorderRadius.vertical(top: Radius.circular(30)) : BorderRadius.circular(30)),
+        shape: RoundedRectangleBorder(borderRadius: (tapped) ? const BorderRadius.vertical(top: Radius.circular(30)) : BorderRadius.circular(30)),
         clipBehavior: Clip.hardEdge,
         color: widget.bodyColor,
         child: InkWell(

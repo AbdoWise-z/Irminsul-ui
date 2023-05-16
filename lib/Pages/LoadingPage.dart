@@ -16,7 +16,6 @@ class _LoadingPageState extends State<LoadingPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: (dark)? Colors.black : Colors.white,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -26,14 +25,11 @@ class _LoadingPageState extends State<LoadingPage> {
               width: 100,
               child: Image.asset("nahida-genshin-unscreen.gif")
             ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(12, 24, 12, 24),
-              child: Text(
-                widget.msg,
-                style: const TextStyle(
-                  color: Colors.lightGreen,
-                  fontSize: 20,
-                ),
+
+            const SizedBox(
+              width: 100,
+              child: LinearProgressIndicator(
+                minHeight: 6,
               ),
             ),
           ],

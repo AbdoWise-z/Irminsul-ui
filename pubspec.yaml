@@ -35,7 +35,7 @@ dependencies:
   loading_animation_widget: ^1.2.0+3
   http: ^0.13.5
   url_launcher: ^6.1.10
-
+  animated_theme_switcher:
 
 
 
@@ -74,6 +74,10 @@ flutter:
     - sun_icon.png
     - nahida-sleeping-genshin-impact-unscreen.gif
     - nahida-walk-unscreen.gif
+    - irminsul_golden.png
+    - irminsul_white.png
+    - irminsul_text.png
+    - not-found.png
 
 
 
