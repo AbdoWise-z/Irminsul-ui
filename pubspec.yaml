@@ -67,13 +67,7 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-    - nahida.jpg
     - nahida-genshin-unscreen.gif
-    - nahida-umbrella.png
-    - moon_icon.png
-    - sun_icon.png
-    - nahida-sleeping-genshin-impact-unscreen.gif
-    - nahida-walk-unscreen.gif
     - irminsul_golden.png
     - irminsul_white.png
     - irminsul_text.png
