@@ -82,7 +82,6 @@ class _SearchResults2PageState extends State<SearchResults2Page> {
     print("Search done !");
 
     translate();
-
   }
 
   List translated = [];
@@ -186,6 +185,10 @@ class _SearchResults2PageState extends State<SearchResults2Page> {
 
   @override
   Widget build(BuildContext context) {
+    List<String> sugg = [];
+    for (var item in suggestionList){
+      sugg.add(item["Query"]);
+    }
 
     return ThemeSwitchingArea(
       child: Scaffold(
@@ -215,9 +218,7 @@ class _SearchResults2PageState extends State<SearchResults2Page> {
                             width: 60,
                             height: 50,
                             child: Image.asset(
-
-                              "irminsul_golden.png",
-
+                              "assets/irminsul_golden.png",
                               color: dark ? const Color.fromARGB(255, 255, 255, 255) : const Color.fromARGB(
                                   255, 40, 40, 40),
                               fit: BoxFit.cover,
@@ -228,7 +229,7 @@ class _SearchResults2PageState extends State<SearchResults2Page> {
                             width: 60,
                             height: 28,
                             child: Image.asset(
-                              "irminsul_text.png",
+                              "assets/irminsul_text.png",
                               color: dark ? const Color.fromARGB(255, 255, 255, 255) : const Color.fromARGB(
                                   255, 40, 40, 40),
                             ),
@@ -237,17 +238,20 @@ class _SearchResults2PageState extends State<SearchResults2Page> {
                       ),
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(4, 0, 0, 0),
-                    child: ThemedSearchBar(
-                      onEnterPressed: () => search(),
-                      onSuggestionSelected: (str) {
-                        controller.text = str;
-                        search();
-                      },
-                      onEdit: (str) {
-                        getSuggestions(str);
-                      },
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(4, 0, 85, 4),
+                      child: ThemedSearchBar(
+                        onEnterPressed: () => search(),
+                        onSuggestionSelected: (str) {
+                          controller.text = str;
+                          search();
+                        },
+                        onEdit: (str) {
+                          getSuggestions(str);
+                        },
+                        suggestionList: sugg,
+                      ),
                     ),
                   )
                 ],
@@ -386,7 +390,7 @@ class _SearchResults2PageState extends State<SearchResults2Page> {
                       width: 60,
                       height: 60,
                       child: Image.asset(
-                        "not-found.png",
+                        "assets/not-found.png",
                         color: dark ? const Color.fromARGB(255, 100, 100, 255) : const Color.fromARGB(
                             255, 100, 100, 255),
                       ),

@@ -1,208 +1,191 @@
 
+import 'package:animated_theme_switcher/animated_theme_switcher.dart';
 import 'package:flutter/material.dart';
-import 'package:project/Pages/LoadingPage.dart';
+import 'package:project/CustomWidgets/ThemedSearchBar.dart';
 import 'package:http/http.dart' as http;
-import 'package:project/CustomWidgets/SearchBar.dart';
-import 'package:project/CustomWidgets/SearchTextField.dart';
 import '../Info.dart';
 import 'dart:convert';
 
-class Home extends StatefulWidget {
-  const Home({super.key});
-
-
+class Home2 extends StatelessWidget {
+  const Home2({super.key});
   @override
-  State<Home> createState() => _HomeState();
+  Widget build(BuildContext context) {
+    return ThemeProvider(
+      initTheme: dark ? ThemeData.dark() : ThemeData.light(),
+      builder: (_ , theme) {
+        return Home2Page();
+      },
+    );
+  }
 }
 
-class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
+class Home2Page extends StatefulWidget {
+  const Home2Page({Key? key}) : super(key: key);
 
-  bool ready = false;  //should be false at begin
+  @override
+  State<Home2Page> createState() => _Home2PagePageState();
+}
 
-  bool switchPressed = false;
+class _Home2PagePageState extends State<Home2Page> {
 
-  late AnimationController animationController;
-  late Animation<Color?> backgroundColorTween;
-  late Animation<Color?> searchBarBodyColorTween;
-  late Animation<Color?> searchBarInnerColorTween;
-  late Animation<double> sizeScaleTween;
-  late Animation<double> curve;
-
-
-  void _handleReadyChanged(bool isReady) {
+  void search() {
+    if (controller.text.isEmpty) {
+      return;
+    }
     setState(() {
-      ready = isReady;
+      Navigator.pushNamed(context, "/results");
     });
   }
 
-  void getSuggestions() async {
+  bool sugLoading = false;
+  String? sugNext;
+  void getSuggestions(String str) async {
+    //print("trying to get suggestions for : " + str);
+    if (sugLoading){
+      sugNext = str;
+      return;
+    }
+    sugLoading = true;
 
-    // var response = await http.get(Uri.parse(serverAddress),
-    //     headers: {"req_type" : "auto_complete"},
-    // );
-    // print(response.body);
-    // suggestionList = jsonDecode(response.body);
+    //load it here
+    suggestionList.clear();
 
-    //await Future.delayed(const Duration(seconds: 2));
-    _handleReadyChanged(true);
-  }
+    //print("Loading suggestions");
 
-  void sendQuery() async{
-
-    _handleReadyChanged(false);
-    tapped = false;
-    Uri url = Uri.http(serverAddress , "/search" , {"q" : controller.text});
-    //print("Requesting: $url");
+    Uri url = Uri.http(serverAddress , "/Query" , {"q" : controller.text});
     var response = await http.get(url);
-    //print(response.body);
-    resultList = jsonDecode(response.body);
-    // await Future.delayed(const Duration(seconds: 2));
 
-    print("Resultlist.len = ${resultList.length}");
+    if (response.body.isNotEmpty) {
+      suggestionList = jsonDecode(response.body);
+    }
 
+    //print("Done suggestions");
 
-    setState(() {
-      Navigator.pushNamed(context, "/searchResult");
-      ready = true;
-    });
+    sugLoading = false;
+    if (sugNext != null && sugNext != str){
+      String q = sugNext!;
+      sugNext = null;
+      getSuggestions(q);
 
+    }else{
+      setState(() {
+      });
+    }
   }
 
   @override
   void initState() {
     super.initState();
 
-    tapped = false;
+    suggestionList.clear();
 
-    animationController = AnimationController(
-      vsync: this,
-      duration: const Duration(seconds: 1),
-    );
-
-    curve = CurvedAnimation(parent: animationController, curve: Curves.fastOutSlowIn);
-
-    backgroundColorTween = ColorTween(
-      begin: Colors.white,
-      end:   Colors.black,
-    ).animate(curve);
-
-    searchBarBodyColorTween = ColorTween(
-      begin: Colors.lightGreenAccent,
-      end: Colors.white,
-    ).animate(curve);
-
-    searchBarInnerColorTween = ColorTween(
-      begin: Colors.black,
-      end: Colors.lightGreenAccent,
-    ).animate(curve);
-
-    sizeScaleTween = Tween<double>(begin: 1, end: 1750).animate(curve);
-
-    animationController.addListener(() {
-      //print(animationController.value);
-      //print(backgroundColorTween.value);
-    });
-    animationController.addStatusListener((status) {
-      print(status);
-    });
-
-    (dark)? animationController.forward() : animationController.reverse();
-
-    getSuggestions();
   }
+
   @override
   void dispose() {
     super.dispose();
-    animationController.dispose();
   }
+
 
 
   @override
   Widget build(BuildContext context) {
+    List<String> sugg = [];
+    for (var item in suggestionList){
+      sugg.add(item["Query"]);
+    }
 
-    return (ready) ? AnimatedBuilder(
-      animation: animationController,
-      builder: (BuildContext context, _ ){
-        return Scaffold(
-          //backgroundColor: (dark)? Colors.black : Colors.white,
-          body: Stack(
-              alignment: AlignmentDirectional.topEnd,
-              children: [
-                ScaleTransition(
-                  alignment: Alignment.topRight,
-                  scale: sizeScaleTween,
-                  child: ClipRRect(
-                    borderRadius: const BorderRadius.only(bottomLeft: Radius.circular(20)),
-                    child: Container(
-                      width: 1,
-                      height: 1,
-                      color: (animationController.isAnimating || animationController.isCompleted)? Colors.black : Colors.transparent,
+    return ThemeSwitchingArea(
+      child: Scaffold(
+        appBar: null,
+        body: Row(
+          children: [
+            Expanded(
+              flex: 1,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  const SizedBox(
+                    width: 0,
+                    height: 150,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
+                    child: SizedBox(
+                      width: 150,
+                      height: 150,
+                      child: Image.asset(
+                        "assets/irminsul_white.png",
+                        color: dark ? const Color.fromARGB(255, 255, 255, 255) : const Color.fromARGB(
+                            255, 40, 40, 40),
+                      ),
                     ),
                   ),
-                ),
-                Center(
-                  child: Column(
-                      children: [
-                        const SizedBox(
-                          width: 0,
-                          height: 120,
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
-                          child: Container(
-                            width: 150,
-                            height: 150,
-                            child: Image.asset(
-                                "irminsul_white.png",
-                              color: Colors.black,
-                            ),
-                          ),
-                        ),
 
-                        Container(
-                          width: 100,
-                          height: 75,
-                          child: Image.asset(
-                              "irminsul_text.png",
-                            color: Colors.black,
-                          ),
+                  SizedBox(
+                    width: 100,
+                    height: 75,
+                    child: Image.asset(
+                      "assets/irminsul_text.png",
+                      color: dark ? const Color.fromARGB(255, 255, 255, 255) : const Color.fromARGB(
+                          255, 40, 40, 40),
+                    ),
+                  ),
+
+                  Row(
+                    children: [
+                      const Expanded(flex: 1, child: SizedBox()),
+                      Expanded(
+                        flex: 4,
+                        child: ThemedSearchBar(
+                          onEnterPressed: () => search(),
+                          onSuggestionSelected: (str) {
+                            controller.text = str;
+                            search();
+                          },
+                          onEdit: (str) {
+                            getSuggestions(str);
+                          },
+                          suggestionList: sugg,
                         ),
-                        SearchBar(
-                          onSuggestionSelected: (String selection) {
-                            controller.text = selection;
-                            sendQuery();
-                            //print(controller.text);
-                          },
-                          onButtonPressed: (){
-                            (controller.text == '')? null : sendQuery();
-                          },
-                          bodyColor: searchBarBodyColorTween.value!,
-                          innerColor: searchBarInnerColorTween.value!,
-                        )
-                      ]
+                      ),
+                      const Expanded(flex: 1, child: SizedBox()),
+                    ],
+                  )
+                ],
+              ),
+            ),
+          ],
+        ),
+        floatingActionButton: Padding(
+          padding: const EdgeInsets.fromLTRB(0, 12, 0, 0),
+          child: ThemeSwitcher(
+              builder: (context) => SizedBox(
+                width: 40,
+                height: 40,
+                child: FloatingActionButton(
+                  onPressed: (){
+                    ThemeSwitcher.of(context).changeTheme(
+                        theme: dark ? ThemeData.light() : ThemeData.dark()
+                    );
+                    dark = !dark;
+                  },
+                  splashColor: dark ? const Color.fromARGB(255, 61, 61, 61) : const Color.fromARGB(255, 238, 238, 238),
+                  backgroundColor: dark ? const Color.fromARGB(255, 238, 238, 238) : const Color.fromARGB(255, 61, 61, 61),
+                  elevation: 15,
+                  child: Icon(
+                    dark ? Icons.dark_mode_outlined : Icons.light_mode_outlined,
+                    size: 20,
                   ),
                 ),
-                IconButton(
-                  onPressed: (){
-                    setState((){
-                      if(!animationController.isAnimating){
-                        dark = !dark;
-                      }
-                      if(animationController.isCompleted){
-                        animationController.reverse();
-                      }
-                      else if(animationController.isDismissed){
-                        animationController.forward();
-                      }
-                    });
-                  },
-                  icon: (dark)? const Icon(Icons.sunny , color: Colors.lightGreenAccent,) : Image.asset('moon_icon.png'),
-                ),
-              ]
+              )
           ),
-        );
-      },
-    )
-    : const LoadingPage();
+        ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.endTop,
+      ),
+    );
   }
 }
+
+

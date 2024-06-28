@@ -1,16 +1,18 @@
 
 import 'package:flutter/material.dart';
-import 'package:project/CustomWidgets/ThemedSearchTextField.dart';
 import '../Info.dart';
-import 'package:project/CustomWidgets/SearchTextField.dart';
+import 'ThemedSearchTextField.dart';
+
+//fixme: issue related to Focus change , but I can't be bothered about it rn ...
 
 class ThemedSearchBar extends StatefulWidget {
 
   final void Function(String)? onSuggestionSelected;
   final void Function()? onEnterPressed;
   final void Function(String)? onEdit;
+  final List<String> suggestionList;
 
-  ThemedSearchBar({Key? key,this.onEnterPressed,this.onSuggestionSelected , this.onEdit }) : super(key: key);
+  const ThemedSearchBar({Key? key,this.onEnterPressed,this.onSuggestionSelected , this.onEdit, required this.suggestionList }) : super(key: key);
 
   @override
   State<ThemedSearchBar> createState() => _ThemedSearchBarState();
@@ -27,6 +29,8 @@ class _ThemedSearchBarState extends State<ThemedSearchBar> {
     focusNode.addListener(() {
       setState(() {});
     });
+
+
   }
 
   @override
@@ -35,19 +39,23 @@ class _ThemedSearchBarState extends State<ThemedSearchBar> {
     super.dispose();
   }
 
+  List<String> matches = <String>[];
+
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: 700,
-      child: RawAutocomplete(
+    return LayoutBuilder(
+      builder: (context , constraints) => RawAutocomplete<String>(
         focusNode: focusNode,
         textEditingController: controller,
         optionsBuilder: (TextEditingValue textEditingValue) {
-          List<String> matches = <String>[];
-          matches.addAll(suggestionList.map((e) => e["Query"]));
+
+          matches.clear();
+          matches.addAll(widget.suggestionList); // <-- suggestions here
+
           matches.retainWhere((s){
-            return s.toLowerCase().contains(textEditingValue.text.toLowerCase());
+            return s.toLowerCase().contains(textEditingValue.text.toLowerCase()) && !(s == textEditingValue.text);
           });
+
           if (openBottom != matches.isNotEmpty){
             setState(() {
               openBottom = matches.isNotEmpty;
@@ -55,7 +63,13 @@ class _ThemedSearchBarState extends State<ThemedSearchBar> {
           }
           return matches;
         },
-        onSelected: widget.onSuggestionSelected,
+        onSelected: (str) {
+          if (widget.onSuggestionSelected != null){
+            widget.onSuggestionSelected!(str);
+          }
+          setState(() {
+          });
+        },
         fieldViewBuilder: (BuildContext context, TextEditingController textEditingController,
             FocusNode focusNode,
             VoidCallback onFieldSubmitted) {
@@ -63,61 +77,48 @@ class _ThemedSearchBarState extends State<ThemedSearchBar> {
             focusNode: focusNode,
             onPressed: widget.onEnterPressed,
             onEdit: widget.onEdit,
-            openBottom: openBottom && focusNode.hasFocus,
+            openBottom: openBottom && focusNode.hasFocus ,
           );
         },
-        optionsViewBuilder: (BuildContext context, void Function(String) onSelected,
-            Iterable<String> options) {
-          return Scaffold(
-            backgroundColor: Colors.transparent,
-            body: Material(
-              elevation: 10,
-              shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(bottom: Radius.circular(20))),
-              child: IntrinsicHeight(
-                child: Column(
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: options.take(5).map((opt){
-                        return InkWell(
-                          onTap: (){
-                            onSelected(opt);
-                          },
-                          child: Container(
-                            width: 700,
-                            padding: const EdgeInsets.fromLTRB(15, 10, 30, 10),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  children: [
-                                    const Icon(Icons.search, color: Color.fromARGB(
-                                        255, 98, 58, 0),size: 20,),
-                                    const SizedBox(width: 20,),
-                                    FittedBox(
-                                      child: SizedBox(
-                                          width: 607,
-                                          child: Text(opt)
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                // const Divider(
-                                //     color: Colors.lightGreen
-                                // ),
-                              ],
-                            ),
-                          ),
-                        );
-                      }).toList(),
+        optionsViewBuilder: (context, onSelected, options) => Align(
+          alignment: Alignment.topLeft,
+          child: Material(
+            elevation: 10,
+            shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.vertical(bottom: Radius.circular(25.0)),
+            ),
+            child: SizedBox(
+              height: 52.0 * options.length,
+              width: constraints.biggest.width, // <-- Right here !
+              child: ListView.builder(
+                padding: EdgeInsets.zero,
+                itemCount: options.length,
+                shrinkWrap: false,
+                itemBuilder: (BuildContext context, int index) {
+                  final String option = options.elementAt(index);
+                  return InkWell(
+                    onTap: () => onSelected(option),
+                    customBorder: RoundedRectangleBorder(
+                      borderRadius: index == options.length - 1 ? const BorderRadius.vertical(bottom: Radius.circular(25.0)) :  BorderRadius.zero,
+                      side: BorderSide.none,
                     ),
-                    const SizedBox(height: 15,)
-                  ],
-                ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Row(
+                        children: [
+                          const Icon(Icons.search, color: Color.fromARGB(
+                              255, 98, 58, 0),size: 20,),
+                          const SizedBox(width: 20,),
+                          Text(option),
+                        ],
+                      ),
+                    ),
+                  );
+                },
               ),
             ),
-          );
-        },
+          ),
+        ),
       ),
     );
   }

@@ -1,6 +1,10 @@
 
 import 'package:flutter/material.dart';
-import 'package:project/Info.dart';
+
+import '../Info.dart';
+
+//imported from our
+
 
 class ThemedSearchTextField extends StatefulWidget {
 
@@ -29,7 +33,7 @@ class _ThemedSearchTextFieldState extends State<ThemedSearchTextField> {
         shape: RoundedRectangleBorder(borderRadius: (widget.openBottom) ? const BorderRadius.vertical(top: Radius.circular(30)) : BorderRadius.circular(30)),
         clipBehavior: Clip.antiAliasWithSaveLayer,
         color: dark ? const Color.fromARGB(255, 33, 33, 33) : const Color.fromARGB(
-            255, 141, 141, 141),
+            255, 187, 187, 187),
         child: InkWell(
           child: Padding(
             padding: const EdgeInsets.all(0),
@@ -37,7 +41,7 @@ class _ThemedSearchTextFieldState extends State<ThemedSearchTextField> {
               onEditingComplete: widget.onPressed ?? () {},
               onChanged: widget.onEdit,
               style: const TextStyle(
-                fontSize: 18
+                fontSize: 18,
               ),
               decoration: InputDecoration(
                 suffixIcon: IconButton(

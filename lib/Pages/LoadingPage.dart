@@ -23,7 +23,7 @@ class _LoadingPageState extends State<LoadingPage> {
           children: [
             SizedBox(
               width: 100,
-              child: Image.asset("nahida-genshin-unscreen.gif")
+              child: Image.asset("assets/nahida-genshin-unscreen.gif")
             ),
 
             const SizedBox(
