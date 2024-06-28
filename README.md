@@ -127,6 +127,23 @@ cd Irminsul-ui
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ## Gallery
+<table align="cetner">
+<div align="center">
+<img src="images/theme_switch.jpg" width="95%">
+</div>
+<td>
+<img src="images/main-light.png">
+</td>
+<td>
+<img src="images/main-dark.png">
+</td>
+</table>
+
+<div align="center">
+<p>Different Themes</p>
+</div>
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
 <div align="center">
 <img src="images/theme.gif" width="75%">
 <p>Theme switching</p>
